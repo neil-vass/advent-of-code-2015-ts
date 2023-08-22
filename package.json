@@ -1,0 +1,23 @@
+{
+  "name": "advent-of-code-2015-ts",
+  "version": "1.0.0",
+  "description": "https://adventofcode.com/2015/ puzzles in TypeScript",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neil-vass/advent-of-code-2015-ts.git"
+  },
+  "author": "Neil Vass",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neil-vass/advent-of-code-2015-ts/issues"
+  },
+  "homepage": "https://github.com/neil-vass/advent-of-code-2015-ts#readme",
+  "devDependencies": {
+    "prettier": "^3.0.2",
+    "vitest": "^0.34.2"
+  }
+}
