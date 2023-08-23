@@ -1,13 +1,17 @@
-import {expect, test, describe, it} from "vitest";
+import {expect, describe, it} from "vitest";
 const day01 = require("../src/day01")
 
-describe("Vitest setup", () => {
-    it("Makes simple comparisons", () => {
-        expect(1).toBe(1);
+describe("#findFloor", () => {
+    it("Gets back to 0 with even matches", () => {
+        expect(day01.findFloor("(())")).toBe(0);
     });
 
-    it("Can call src files", () => {
-        expect(day01.callMe()).toBe("Hi!");
+    it("Gets floor 3 when there are 3 more (", () => {
+        expect(day01.findFloor("(()(()(")).toBe(3);
+    });
+
+    it("Gets to negative floor", () => {
+        expect(day01.findFloor(")())())")).toBe(-3);
     });
 });
 
