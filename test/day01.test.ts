@@ -15,6 +15,16 @@ describe("#findFloor", () => {
     });
 });
 
+describe("#firstEntryToBasement", () => {
+    it("Enters the basement at first position", () => {
+        expect(day01.firstEntryToBasement(")")).toBe(1)
+    });
+
+    it("Enters the basement after moving up and down", () => {
+        expect(day01.firstEntryToBasement("()())")).toBe(5)
+    });
+});
+
 
 
 
