@@ -1,16 +1,13 @@
-// Trying out n-readlines, which has nice short syntax
-// BUT: I had to import it separately,
-// and I haven't spotted any Typescript type declarations for it.
-// Might change to something different!
-import readlines from "n-readlines";
+import fs from "fs";
+import readline from "node:readline/promises";
 
-export function* fetchData(path: string) {
-    const lines = new readlines(path);
-    let ln: string;
-    for (ln = lines.next()) {
-        yield ln.toString().split('x').map(n => Number(n));
+export async function* fetchData(path: string) {
+    const lineReader = readline.createInterface(
+        {input: fs.createReadStream(path)});
+
+    for await (const line of lineReader) {
+        yield line.split('x').map(n => Number(n));
     }
-
 }
 
 export function requiredWrapping(length: number, width: number, height: number) {
@@ -20,6 +17,19 @@ export function requiredWrapping(length: number, width: number, height: number) 
 }
 
 if (require.main === module) {
-    const data: string = fetchData("data/day02.txt");
+    // TODO: Can't have a top-level await without changing some settings -
+    // TODO: here's a hacky "pretend it's async" thing until I change those.
+    (async () => {
+        const data = fetchData("src/data/day02.txt");
+        // TODO: is there a nice .reduce() syntax I can use?
+        // TODO: Python accepts generators easily, to pipeline things like that.
+        // TODO: Don't know if this being an async generator complicates things...
+        let total = 0;
+        for await (const dimensions of data) {
+            // TODO: How can I ...spread the array in here as arguments?
+            total += requiredWrapping(dimensions[0],dimensions[1],dimensions[2]);
+        }
+        console.log(total);
+    })();
     console.log();
 }

@@ -25,7 +25,7 @@ export function firstEntryToBasement(instructions: string) {
 
 
 if (require.main === module) {
-    const data: string = fetchData("data/day01.txt");
+    const data: string = fetchData("src/data/day01.txt");
     console.log(findFloor(data));
     console.log(firstEntryToBasement(data));
 }
