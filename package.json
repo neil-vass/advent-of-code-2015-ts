@@ -20,5 +20,8 @@
     "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
+  },
+  "dependencies": {
+    "n-readlines": "^1.0.1"
   }
 }
