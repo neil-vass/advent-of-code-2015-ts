@@ -10,6 +10,8 @@ export async function* fetchData(path: string) {
     }
 }
 
+
+
 export function requiredWrapping(length: number, width: number, height: number) {
     const sides = [length*width, width*height, height*length];
     const smallestSide = Math.min(...sides);
@@ -24,7 +26,7 @@ async function main() {
     let total = 0;
     for await (const dimensions of data) {
         // TODO: How can I ...spread the array in here as arguments?
-        total += requiredWrapping(dimensions[0],dimensions[1],dimensions[2]);
+        total += requiredWrapping(dimensions[0], dimensions[1], dimensions[2]);
     }
     console.log(total);
 }
