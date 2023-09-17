@@ -23,8 +23,10 @@ export async function* linesFromFile(path: string) : Sequence<string> {
     }
 }
 
-export async function* map<From, To>(func: (x: From) => To, sequence: Sequence<From>) : Sequence<To> {
-    for await (const x of sequence) yield func(x);
+export async function* map<From, To>(sequence: Sequence<From>, func: (x: From) => To) : Sequence<To> {
+    for await (const x of sequence) {
+        yield func(x);
+    }
 }
 
 export async function sum(sequence: Sequence<number>) : Promise<number> {

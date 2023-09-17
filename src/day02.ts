@@ -1,11 +1,9 @@
-import fs from "fs";
-import readline from "node:readline/promises";
+import * as utils from "../src/aoc-utils";
+
 
 export async function* fetchData(path: string) {
-    const lineReader = readline.createInterface(
-        {input: fs.createReadStream(path)});
-
-    for await (const line of lineReader) {
+    const lines = utils.linesFromFile(path);
+    for await (const line of lines) {
         yield line.split('x').map(n => Number(n));
     }
 }
