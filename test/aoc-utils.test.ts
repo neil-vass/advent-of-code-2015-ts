@@ -2,18 +2,10 @@ import {expect, describe, it} from "vitest";
 import * as utils from "../src/aoc-utils";
 
 
-async function toArray<T>(sequence: utils.Sequence<T>) {
-    let results: T[] = [];
-    for await (const x of sequence) {
-        results.push(x);
-    }
-    return results;
-}
-
 describe("#linesFromFile", () => {
     it("Returns all lines", async () => {
         const lineReader = utils.linesFromFile("./test/data/example-file.txt");
-        const results = await toArray(lineReader);
+        const results = await utils.toArray(lineReader);
 
         expect(results.length).toBe(3);
         expect(results[2]).toBe("And here's line 3");
@@ -30,7 +22,7 @@ describe("#linesFromFile", () => {
 describe("#map with #linesFromFile", () => {
     it("Maps over an array", async () => {
         const doubles = utils.map([1, 2, 3], x => x * 2);
-        const results = await toArray(doubles);
+        const results = await utils.toArray(doubles);
         expect(results).toStrictEqual([2,4,6])
     });
 
@@ -38,7 +30,7 @@ describe("#map with #linesFromFile", () => {
         const lines = utils.linesFromFile("./test/data/example-file.txt");
         const justNums = utils.map(lines, x => Number(x.match(/\d+/)));
 
-        const results = await toArray(justNums);
+        const results = await utils.toArray(justNums);
         expect(results).toStrictEqual([1, 2, 3]);
     });
 });

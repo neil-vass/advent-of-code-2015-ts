@@ -1,14 +1,17 @@
 import * as utils from "../src/aoc-utils";
 
-
-export async function* fetchData(path: string) {
+export type PresentDimensions = [length: number, width: number, height: number]
+export function fetchData(path: string)  {
     const lines = utils.linesFromFile(path);
-    for await (const line of lines) {
-        yield line.split('x').map(n => Number(n));
-    }
+    return utils.map(lines, (ln) => {
+        const m = ln.match(/^(\d+)x(\d+)x(\d+)$/);
+        if(!m) {
+            throw Error(`File's not formatted correctly, one line is "${ln}"`);
+        }
+        const dimensions: PresentDimensions = [Number(m[1]), Number(m[2]), Number(m[3])];
+        return dimensions;
+    });
 }
-
-
 
 export function requiredWrapping(length: number, width: number, height: number) {
     const sides = [length*width, width*height, height*length];
@@ -16,19 +19,22 @@ export function requiredWrapping(length: number, width: number, height: number) 
     return sides.reduce((acc, val) => acc + 2*val, smallestSide);
 }
 
-async function main() {
-    const data = fetchData("src/data/day02.txt");
+export async function totalWrappingForPresents(presentDimensions: utils.Sequence<[number, number, number]>) {
     // TODO: is there a nice .reduce() syntax I can use?
     // TODO: Python accepts generators easily, to pipeline things like that.
     // TODO: Don't know if this being an async generator complicates things...
     let total = 0;
-    for await (const dimensions of data) {
+    for await (const dimensions of presentDimensions) {
         // TODO: How can I ...spread the array in here as arguments?
-        total += requiredWrapping(dimensions[0], dimensions[1], dimensions[2]);
+        const [length, width, height] = dimensions;
+        total += requiredWrapping(length, width, height);
     }
-    console.log(total);
+    return total;
 }
 
 if (require.main === module) {
-    void main();
+    (async () => {
+        const data = fetchData("src/data/day02.txt")
+        console.log(await totalWrappingForPresents(data));
+    })();
 }

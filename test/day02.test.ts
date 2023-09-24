@@ -1,12 +1,16 @@
 import {expect, describe, it} from "vitest";
-const day02 = require("../src/day02")
+import * as utils from "../src/aoc-utils";
+import * as day02 from "../src/day02"
 
 describe("#fetchData", () => {
     it("Splits each row into 3 numbers", async () => {
         const data = day02.fetchData("test/data/day02.txt");
-        expect((await data.next()).value).toStrictEqual([2, 3, 4]);
-        expect((await data.next()).value).toStrictEqual([1, 1, 10]);
-        expect((await data.next()).value).toBeUndefined();
+        const expected = [
+            [2, 3, 4],
+            [1, 1, 10]
+        ];
+
+        expect(await utils.toArray(data)).toStrictEqual(expected);
     });
 });
 
@@ -19,6 +23,13 @@ describe("#requiredWrapping", () => {
         expect(day02.requiredWrapping(1, 1, 10)).toBe(43);
     });
 });
+
+describe("#totalWrappingForPresents", () => {
+    it("Returns total for whole collection", async () => {
+        const data = day02.fetchData("test/data/day02.txt");
+        expect(await day02.totalWrappingForPresents(data)).toBe(101);
+    })
+})
 
 
 

@@ -17,6 +17,16 @@ import readline from "node:readline/promises";
 // to await its values anyway.
 export type Sequence<T> = Iterable<T> | AsyncIterable<T>
 
+// Convenience function, to run through a whole sequence and collect it
+// into an array. Only use this if you know the sequence is finite and
+// its contents will fit into memory.
+export async function toArray<T>(sequence: Sequence<T>) {
+    let results: T[] = [];
+    for await (const x of sequence) {
+        results.push(x);
+    }
+    return results;
+}
 export async function* linesFromFile(path: string) : Sequence<string> {
     for await (const line of readline.createInterface({input: fs.createReadStream(path)})) {
         yield line;
