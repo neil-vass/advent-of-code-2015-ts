@@ -1,6 +1,22 @@
 import * as utils from "../src/aoc-utils";
 
-export type PresentDimensions = [length: number, width: number, height: number]
+export class Present {
+    constructor(readonly length: number,
+                readonly width: number,
+                readonly height: number) {}
+
+    // Find the surface area of the box, which is 2*l*w + 2*w*h + 2*h*l.
+    // The elves also need a little extra paper for each present:
+    // the area of the smallest side.
+    requiredWrapping() {
+        const sides =[this.length * this.width,
+                                this.width * this.height,
+                                this.height * this.length];
+
+        return sides.reduce((acc, side) => acc + 2*side, Math.min(...sides))
+    }
+}
+
 export function fetchData(path: string)  {
     const lines = utils.linesFromFile(path);
     return utils.map(lines, (ln) => {
@@ -8,28 +24,12 @@ export function fetchData(path: string)  {
         if(!m) {
             throw Error(`File's not formatted correctly, one line is "${ln}"`);
         }
-        const dimensions: PresentDimensions = [Number(m[1]), Number(m[2]), Number(m[3])];
-        return dimensions;
+        return new Present(Number(m[1]), Number(m[2]), Number(m[3]));
     });
 }
 
-export function requiredWrapping(length: number, width: number, height: number) {
-    const sides = [length*width, width*height, height*length];
-    const smallestSide = Math.min(...sides);
-    return sides.reduce((acc, val) => acc + 2*val, smallestSide);
-}
-
-export async function totalWrappingForPresents(presentDimensions: utils.Sequence<[number, number, number]>) {
-    // TODO: is there a nice .reduce() syntax I can use?
-    // TODO: Python accepts generators easily, to pipeline things like that.
-    // TODO: Don't know if this being an async generator complicates things...
-    let total = 0;
-    for await (const dimensions of presentDimensions) {
-        // TODO: How can I ...spread the array in here as arguments?
-        const [length, width, height] = dimensions;
-        total += requiredWrapping(length, width, height);
-    }
-    return total;
+export async function totalWrappingForPresents(presents: utils.Sequence<Present>) {
+    return await utils.sum(utils.map(presents, p => p.requiredWrapping()));
 }
 
 if (require.main === module) {
