@@ -24,8 +24,10 @@ export function firstEntryToBasement(instructions: string) {
 }
 
 
-if (require.main === module) {
+// If this script was invoked directly on the command line:
+if(`file://${process.argv[1]}` === import.meta.url) {
     const data: string = fetchData("src/data/day01.txt");
     console.log(findFloor(data));
     console.log(firstEntryToBasement(data));
 }
+

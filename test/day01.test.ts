@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-const day01 = require("../src/day01")
+import * as day01 from "../src/day01";
 
 describe("#findFloor", () => {
     it("Gets back to 0 with even matches", () => {

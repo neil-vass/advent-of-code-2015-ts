@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "https://adventofcode.com/2015/ puzzles in TypeScript",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
     "test": "vitest"
   },
@@ -22,6 +23,7 @@
     "vitest": "^0.34.2"
   },
   "dependencies": {
+    "glob": "^10.3.10",
     "n-readlines": "^1.0.1"
   }
 }

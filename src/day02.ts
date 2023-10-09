@@ -1,40 +1,34 @@
-import * as utils from "../src/aoc-utils";
+import {linesFromFile} from "./file_helpers.js";
+import {Sequence} from "./sequence.js";
 
-export class Present {
-    constructor(readonly length: number,
-                readonly width: number,
-                readonly height: number) {}
+export function parsePresent(line: string): [number, number, number] {
+    const dimensions = line.split("x").map(s => +s);
+    if (dimensions.length !== 3) throw new Error(`Can't parse line: "${line}"`);
 
-    // Find the surface area of the box, which is 2*l*w + 2*w*h + 2*h*l.
-    // The elves also need a little extra paper for each present:
-    // the area of the smallest side.
-    requiredWrapping() {
-        const sides =[this.length * this.width,
-                                this.width * this.height,
-                                this.height * this.length];
-
-        return sides.reduce((acc, side) => acc + 2*side, Math.min(...sides))
-    }
+    // @ts-ignore - compiler's not confident this is 3 numbers.
+    return dimensions;
 }
 
-export function fetchData(path: string)  {
-    const lines = utils.linesFromFile(path);
-    return utils.map(lines, (ln) => {
-        const m = ln.match(/^(\d+)x(\d+)x(\d+)$/);
-        if(!m) {
-            throw Error(`File's not formatted correctly, one line is "${ln}"`);
-        }
-        return new Present(Number(m[1]), Number(m[2]), Number(m[3]));
-    });
+function sum(nums: number[]) {
+    return nums.reduce((acc, val) => acc + val);
 }
 
-export async function totalWrappingForPresents(presents: utils.Sequence<Present>) {
-    return await utils.sum(utils.map(presents, p => p.requiredWrapping()));
+export function requiredWrapping(length: number, width: number, height: number) {
+    const sides = [length*width, width*height, height*length];
+    return sum([...sides, ...sides, Math.min(...sides)]);
 }
 
-if (require.main === module) {
-    (async () => {
-        const data = fetchData("src/data/day02.txt")
-        console.log(await totalWrappingForPresents(data));
-    })();
+export async function totalWrappingForPresents(path: string) {
+    const lines = linesFromFile(path);
+    const presentDimensions = lines.map(line => parsePresent(line));
+    const wrapping = presentDimensions.map(p => requiredWrapping(...p));
+    return Sequence.sum(wrapping);
 }
+
+
+// If this script was invoked directly on the command line:
+if(`file://${process.argv[1]}` === import.meta.url) {
+    const data = "./src/data/day02.txt";
+    console.log(await totalWrappingForPresents(data));
+}
+
