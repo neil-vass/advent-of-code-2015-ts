@@ -1,9 +1,8 @@
 import {expect, describe, it} from "vitest";
 import {Sequence} from "../src/sequence.js";
-import {linesFromFile} from "../src/file_helpers.js";
 
 
-describe("#map with #linesFromFile", () => {
+describe("#map", () => {
     it("Maps over an array", async () => {
         const nums = new Sequence([1, 2, 3]);
         const doubles = nums.map(x => x * 2);
@@ -89,6 +88,18 @@ describe("#maxObject", () => {
         expect(async () => await Sequence.maxObject(items, "size"))
             .rejects
             .toThrow("Key property must be a number");
+    });
+});
+
+describe("#count", () => {
+    it("Counts any type of sequence", async () => {
+        const seq = new Sequence(["a", "b", "c", "d"]);
+        expect(await Sequence.count(seq)).toBe(4);
+    });
+
+    it("Count of empty sequence is zero", async () => {
+        const empty = new Sequence([]);
+        expect(await Sequence.count(empty)).toBe(0);
     });
 });
 

@@ -92,5 +92,10 @@ export class Sequence<T> {
         if (largestSeen === undefined) throw new Error("Can't find max of empty sequence");
         return largestSeen;
     }
+
+    // On an infinite sequence, this will never return.
+    static async count(sequence: Sequence<any>) {
+        return Sequence.sum(sequence.map(s => 1));
+    }
 }
 

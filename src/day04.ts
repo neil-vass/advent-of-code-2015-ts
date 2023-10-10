@@ -1,13 +1,9 @@
 import {md5} from "js-md5";
 
-export function md5HashOf(str: string) {
-    return md5(str);
-}
-
 export function seedNumberFor(key: string, leadingZeroes: number = 5) {
     const target = "0".repeat(leadingZeroes);
     let seedNumber = 0;
-    while(!md5HashOf(`${key}${seedNumber}`).startsWith(target)) {
+    while(!md5(`${key}${seedNumber}`).startsWith(target)) {
         seedNumber++;
     }
     return seedNumber;
