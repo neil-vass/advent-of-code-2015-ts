@@ -1,7 +1,6 @@
 import {expect, describe, it} from "vitest";
 import * as day02 from "../src/day02"
 
-
 describe("#parsePresent", () => {
     it("Splits a string into a present", async () => {
         const line = "2x3x4";
