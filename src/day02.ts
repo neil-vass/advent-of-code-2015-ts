@@ -9,6 +9,7 @@ export function parsePresent(line: string): [number, number, number] {
     return dimensions;
 }
 
+// Reuse: if more files need this, move to helpers.ts
 function sum(nums: number[]) {
     return nums.reduce((acc, val) => acc + val);
 }
@@ -18,6 +19,7 @@ export function requiredWrapping(length: number, width: number, height: number) 
     return sum([...sideAreas, ...sideAreas, Math.min(...sideAreas)]);
 }
 
+// Reuse: if more files need this, move to helpers.ts
 function sortAscending(...nums: number[]) {
     return nums.sort((a,b) => a - b);
 }
