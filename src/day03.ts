@@ -1,26 +1,31 @@
-import fs from "fs";
 import {singleLineFromFile} from "./helpers.js";
 
+function move(dir: string, pos: [number, number]): [number, number] {
+    const [x,y] = pos;
+    switch(dir) {
+        case ">": return [x+1, y];
+        case "<": return [x-1, y];
+        case "^": return [x, y+1];
+        case "v": return [x, y-1];
+        default: throw new Error(`Unexpected instruction: ${dir}`);
+    }
+}
 
-export function housesDeliveredTo(instructions: string) {
-    let x = 0, y = 0;
+export function housesDeliveredTo(instructions: string, numSantas: number = 1) {
+
+    const santaPositions: [number, number][] = [];
+    while (santaPositions.length < numSantas) {
+        santaPositions.push([0,0]);
+    }
+
+    let currentSanta = 0;
     const visited = new Set();
-    visited.add([x,y].toString());
+    visited.add(santaPositions[currentSanta].toString());
 
-    for (const move of instructions) {
-        if (move === ">") {
-            x += 1;
-        } else if (move === "<") {
-            x -= 1;
-        } else if (move === "^") {
-            y += 1;
-        } else if (move === "v") {
-            y -= 1;
-        } else {
-            throw new Error(`Unexpected instruction: ${move}`);
-        }
-
-        visited.add([x,y].toString());
+    for (const dir of instructions) {
+        santaPositions[currentSanta] = move(dir, santaPositions[currentSanta]);
+        visited.add(santaPositions[currentSanta].toString());
+        currentSanta = (currentSanta+1) % numSantas;
     }
     return visited.size;
 }
@@ -30,4 +35,5 @@ export function housesDeliveredTo(instructions: string) {
 if (`file://${process.argv[1]}` === import.meta.url) {
     const instructions = singleLineFromFile("./src/data/day03.txt");
     console.log(housesDeliveredTo(instructions));
+    console.log(housesDeliveredTo(instructions, 2));
 }
