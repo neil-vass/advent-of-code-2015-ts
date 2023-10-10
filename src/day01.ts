@@ -1,8 +1,4 @@
-import fs from "fs";
-
-function fetchData(path: string) {
-    return fs.readFileSync(path, "utf8");
-}
+import {singleLineFromFile} from "./helpers.js";
 
 export function findFloor(instructions: string) {
     let floor = 0;
@@ -28,8 +24,8 @@ export function firstEntryToBasement(instructions: string) {
 
 // If this script was invoked directly on the command line:
 if(`file://${process.argv[1]}` === import.meta.url) {
-    const data: string = fetchData("src/data/day01.txt");
-    console.log(findFloor(data));
-    console.log(firstEntryToBasement(data));
+    const instructions = singleLineFromFile("src/data/day01.txt");
+    console.log(findFloor(instructions));
+    console.log(firstEntryToBasement(instructions));
 }
 
