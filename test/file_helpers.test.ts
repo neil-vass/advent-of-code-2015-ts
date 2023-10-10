@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import {linesFromFile} from "../src/file_helpers.js";
+import {linesFromFile} from "../src/helpers";
 
 describe("#linesFromFile", () => {
     it("Returns all lines", async () => {

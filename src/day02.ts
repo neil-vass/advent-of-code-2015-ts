@@ -1,4 +1,4 @@
-import {linesFromFile} from "./file_helpers.js";
+import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 
 export function parsePresent(line: string): [number, number, number] {
@@ -14,21 +14,30 @@ function sum(nums: number[]) {
 }
 
 export function requiredWrapping(length: number, width: number, height: number) {
-    const sides = [length*width, width*height, height*length];
-    return sum([...sides, ...sides, Math.min(...sides)]);
+    const sideAreas = [length*width, width*height, height*length];
+    return sum([...sideAreas, ...sideAreas, Math.min(...sideAreas)]);
 }
 
-export async function totalWrappingForPresents(path: string) {
+function sortAscending(...nums: number[]) {
+    return nums.sort((a,b) => a - b);
+}
+
+export function requiredRibbon(length: number, width: number, height: number) {
+    const dimensions = sortAscending(length, width, height);
+    return 2*dimensions[0] + 2*dimensions[1] + (length * width * height);
+}
+
+export async function totalForPresents(calculator: (length: number, width: number, height: number) => number, path: string) {
     const lines = linesFromFile(path);
     const presentDimensions = lines.map(line => parsePresent(line));
-    const wrapping = presentDimensions.map(p => requiredWrapping(...p));
-    return Sequence.sum(wrapping);
+    const required = presentDimensions.map(p => calculator(...p));
+    return Sequence.sum(required);
 }
-
 
 // If this script was invoked directly on the command line:
 if(`file://${process.argv[1]}` === import.meta.url) {
-    const data = "./src/data/day02.txt";
-    console.log(await totalWrappingForPresents(data));
+    const filepath = "./src/data/day02.txt";
+    console.log(await totalForPresents(requiredWrapping, filepath));
+    console.log(await totalForPresents(requiredRibbon, filepath));
 }
 

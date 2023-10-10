@@ -21,10 +21,22 @@ describe("#requiredWrapping", () => {
     });
 });
 
+describe("#requiredRibbon", () => {
+    it("Shortest perimeter plus total volume", async () => {
+        expect(day02.requiredRibbon(2, 3, 4)).toBe(34);
+    });
+});
+
+
 describe("#totalWrappingForPresents", () => {
-    it("Reads a file of presents and finds total area needed", async () => {
-        const total = await day02.totalWrappingForPresents("./test/data/day02.txt");
+    it("Reads a file of presents and finds total wrapping area needed", async () => {
+        const total = await day02.totalForPresents(day02.requiredWrapping, "./test/data/day02.txt");
         expect(total).toBe(101);
+    });
+
+    it("Reads a file of presents and finds total ribbon length needed", async () => {
+        const total = await day02.totalForPresents(day02.requiredRibbon, "./test/data/day02.txt");
+        expect(total).toBe(48);
     });
 });
 

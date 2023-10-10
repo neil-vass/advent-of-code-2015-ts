@@ -5,9 +5,11 @@ function fetchData(path: string) {
 }
 
 export function findFloor(instructions: string) {
-    const up = (instructions.match(/\(/g) || []).length;
-    const down = (instructions.match(/\)/g) || []).length;
-    return up - down;
+    let floor = 0;
+    for (const c of instructions) {
+        floor += (c === '('? 1 : -1);
+    }
+    return floor;
 }
 
 export function firstEntryToBasement(instructions: string) {
