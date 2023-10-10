@@ -1,5 +1,12 @@
 import {expect, describe, it} from "vitest";
-import {linesFromFile} from "../src/helpers";
+import {singleLineFromFile, linesFromFile} from "../src/helpers";
+
+describe("#singleLineFromFile", () => {
+    it("Fetches the single line from a one-line file, dropping newline at the end.", () => {
+        const line = singleLineFromFile("./test/data/single-line-file.txt");
+        expect(line).toBe("word");
+    });
+});
 
 describe("#linesFromFile", () => {
     it("Returns all lines", async () => {
@@ -15,11 +22,5 @@ describe("#linesFromFile", () => {
         expect(async () => { for await (const line of lineReader) {} })
             .rejects
             .toThrow("no such file or directory");
-    });
-});
-
-describe("#createObjectFromEntries", () => {
-    it("Creates object from given key, value arrays", () => {
-
     });
 });
