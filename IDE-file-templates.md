@@ -38,7 +38,7 @@ const testFilename = "./test/data/${NAME}.txt"
 
 describe("#fn", () => {
     it("runs", () => {
-        expect(${NAME}.fn(testFilename)).toBe("Write a real test");
+        expect(${NAME}.fn(testFilename)).toBe("a real test");
     });
 });
 ```
