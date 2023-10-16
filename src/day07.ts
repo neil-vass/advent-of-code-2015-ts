@@ -1,6 +1,35 @@
 import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 
+// The circuits can be large and complicated, and when evaluating the outputs the code
+// can end up looping round recalculating the same signals again and again. There's lots
+// of solutions to that - one is to memoize the "getValue" method (cache the result each
+// time it's called, and use the cached value if it gets called again with the same parameters).
+//
+// I've tried doing this using a decorator, to mimic the Python functools "@cache" decorator.
+// That's because:
+// 1. It's neater code (method can just do its work, with caching logic elsewhere)
+// 2. I'm keen to learn lots of TypeScript (haven't seen decorators before).
+// This is the official decorators from TypeScript 5, not the experimental ones available in
+// earlier versions.
+// See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
+function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
+    const cache = new Map<string, any>();
+
+    if (context.kind === "method") {
+        return function (...args: any[]) {
+            const hashKey = args.join("-$-") // very much not a production-quality hash key.
+            if (cache.has(hashKey)) {
+                return cache.get(hashKey);
+            } else {
+                const result = decoratedMethod.apply(this, args);
+                cache.set(hashKey, result);
+                return result;
+            }
+        }
+    }
+}
+
 export class Circuit {
 
     static andGate(leftSignal: number, rightSignal: number) { return leftSignal & rightSignal }
@@ -11,8 +40,6 @@ export class Circuit {
     static notGate(signal: number) { return ~signal & 0xFFFF }
 
     private components = new Map<string, string[]>();
-
-
 
     connect(command: string) {
         const setSignalMatch = command.match(/^(\w+) -> (\w+)$/);
@@ -44,34 +71,26 @@ export class Circuit {
             this.connect(i);
     }
 
-    private getValue(str: string, cache: Map<string, number>) {
+    @memoize
+    private getValue(str: string) {
         if (str.match(/^\d+$/)) {
             return +str;
         } else {
-            const result = this.calculateSignal(str, cache);
-            cache.set(str, result);
+            const result = this.calculateSignal(str);
             return result;
         }
     }
 
-    private calculateSignal(target: string, cache=new Map<string, number>()) : number {
-        if (cache.has(target)) {
-            return cache.get(target)!;
-        }
-
-        if (!this.components.has(target)) {
-            throw new Error(`Wire '${target}' doesn't have an input signal`);
-        }
-
+    private calculateSignal(target: string) : number {
         const inputs = this.components.get(target)!;
         if (inputs.length === 1) {
-            return this.getValue(inputs[0], cache);
+            return this.getValue(inputs[0]);
         }
 
         if (inputs.length === 2) {
             const [opName, arg] = inputs;
             const op = Circuit.notGate;
-            const argSignal = this.getValue(arg, cache);
+            const argSignal = this.getValue(arg);
             return op(argSignal);
         }
 
@@ -84,10 +103,12 @@ export class Circuit {
                 "RSHIFT": Circuit.rshift
             }[opName]!;
 
-            const leftSignal = this.getValue(left, cache);
-            const rightSignal = this.getValue(right, cache);
+            const leftSignal = this.getValue(left);
+            const rightSignal = this.getValue(right);
             return op(leftSignal, rightSignal);
         }
+
+        throw new Error(`Wire '${target}' set up incorrectly`);
     }
 
     signalOn(wire: string)  {
