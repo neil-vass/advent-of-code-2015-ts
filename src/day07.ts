@@ -10,19 +10,27 @@ import {Sequence} from "./sequence.js";
 // That's because:
 // 1. It's neater code (method can just do its work, with caching logic elsewhere)
 // 2. I'm keen to learn lots of TypeScript (haven't seen decorators before).
-// This is the official decorators from TypeScript 5, not the experimental ones available in
-// earlier versions.
+// This is using the official decorators from TypeScript 5, not the experimental ones available
+// in earlier versions.
 // See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
 function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
-    const cache = new Map<string, any>();
+    const cacheCollection = new Map<object, Map<string, any>>();
 
     if (context.kind === "method") {
         return function (...args: any[]) {
+            // @ts-ignore : caller could be any type of object; I'm not sure how
+            // to tell TS that's fine.
+            const callingObject = this;
+            if (!cacheCollection.has(callingObject)) {
+                cacheCollection.set(callingObject, new Map<string, any>());
+            }
+            const cache = cacheCollection.get(callingObject)!;
             const hashKey = args.join("-$-") // very much not a production-quality hash key.
+
             if (cache.has(hashKey)) {
                 return cache.get(hashKey);
             } else {
-                const result = decoratedMethod.apply(this, args);
+                const result = decoratedMethod.apply(callingObject, args);
                 cache.set(hashKey, result);
                 return result;
             }
@@ -116,12 +124,29 @@ export class Circuit {
     }
 }
 
+async function part1(filepath: string) {
+    const circuit = new Circuit();
+    await circuit.build(linesFromFile(filepath));
+    return circuit.signalOn('a');
+}
+
+async function part2(filepath: string, overrideForWireB: number) {
+    const circuit = new Circuit();
+    const commands = linesFromFile(filepath).map(line =>
+        (line.match(/^\d+ -> b$/)) ? `${overrideForWireB} -> b` : line
+    );
+    await circuit.build(commands);
+    return circuit.signalOn('a');
+}
 
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
     const filepath = "./src/data/day07.txt";
-    const circuit = new Circuit();
-    await circuit.build(linesFromFile(filepath));
-    console.log(circuit.signalOn('a'));
+
+    const signalOnWireA = await part1(filepath);
+    console.log(`part 1: ${signalOnWireA}`);
+
+    const updatedSignalOnWireA = await part2(filepath, signalOnWireA);
+    console.log(`part 2: ${updatedSignalOnWireA}`);
 }
 
