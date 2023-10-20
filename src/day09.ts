@@ -25,28 +25,27 @@ export class DistanceTable {
 }
 
 export function permutations<T>(arr: T[]) {
-    return new Sequence(generatePermutations(arr));
-}
 
-
-// Heap's algorithm: a "decrease and conquer" method.
-// Operates on 'k' elements of the array at each step
-// (k starts at array's length and decreases by one each step).
-function* generatePermutations<T>(arr: T[], k: number = arr.length): Iterable<T[]> {
-    if (k === 1) {
-        yield [...arr];
-    } else {
-        for (let i = 0; i < k; i++) {
-            yield* generatePermutations(arr, k - 1);
-
-            if (k % 2 === 0) {
-                [arr[i], arr[k-1]] = [arr[k-1], arr[i]];
-            }
-            else {
-                [arr[0], arr[k-1]] = [arr[k-1], arr[0]];
+    // Heap's algorithm: a "decrease and conquer" method.
+    // Operates on 'k' elements of the array at each step
+    // (k starts at array's length and decreases by one each step).
+    function* generatePermutations<T>(arr: T[], k: number = arr.length): Iterable<T[]> {
+        if (k === 1) {
+            yield [...arr];
+        } else {
+            for (let i = 0; i < k; i++) {
+                yield* generatePermutations(arr, k - 1);
+                if (k % 2 === 0) {
+                    [arr[i], arr[k-1]] = [arr[k-1], arr[i]];
+                }
+                else {
+                    [arr[0], arr[k-1]] = [arr[k-1], arr[0]];
+                }
             }
         }
     }
+
+    return new Sequence(generatePermutations(arr));
 }
 
 
@@ -74,7 +73,7 @@ if (`file://${process.argv[1]}` === import.meta.url) {
     const filepath = "./src/data/day09.txt";
     console.log(fn(filepath));
 
-    for (const p of generatePermutations(["a", "b"])) {
+    for await (const p of permutations(["a", "b"])) {
         console.log(JSON.stringify(p));
     }
 
