@@ -17,13 +17,14 @@ export class DistanceTable {
 
     distance(from: string, to: string) {
         if(this.distances.has(`${from}-${to}`))
-            return this.distances.get(`${from}-${to}`);
+            return this.distances.get(`${from}-${to}`)!;
         if(this.distances.has(`${to}-${from}`))
-            return this.distances.get(`${to}-${from}`);
+            return this.distances.get(`${to}-${from}`)!;
         throw new Error(`Don't know distance between ${from} and ${to}`);
     }
 }
 
+// Reuse: if more files need this, move to helpers.ts
 export function permutations<T>(arr: T[]) {
 
     // Heap's algorithm: a "decrease and conquer" method.
@@ -60,22 +61,22 @@ export async function calculateRoutes(input: Sequence<string>) {
         distanceTable.store(from, to, +distance);
     }
 
-
+    return permutations(distanceTable.allCities()).map(cities => {
+        let route = cities[0];
+        let distance = 0;
+        for (let i=1; i < cities.length; i++) {
+            route += ` -> ${cities[i]}`;
+            distance += distanceTable.distance(cities[i-1], cities[i]);
+        }
+        return {route, distance};
+    });
 }
 
-
-export function fn(filepath: string) {
-    return "Hello, World!";
-}
 
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
-    const filepath = "./src/data/day09.txt";
-    console.log(fn(filepath));
-
-    for await (const p of permutations(["a", "b"])) {
-        console.log(JSON.stringify(p));
-    }
-
-
+    const lines = linesFromFile("./src/data/day09.txt");
+    const choices = await calculateRoutes(lines);
+    const best = await Sequence.maxObject(choices, "distance");
+    console.log(best.distance);
 }

@@ -83,6 +83,11 @@ export class Sequence<T> {
         return sequence.reduce((acc: number, val: number) => (acc > val) ? acc : val)
     }
 
+    static async min(sequence: Sequence<number>) {
+        // Having no initialValue means this will throw on an empty sequence.
+        return sequence.reduce((acc: number, val: number) => (acc < val) ? acc : val)
+    }
+
     static async maxObject(sequence: Sequence<any>, key: string) {
         return sequence.reduce((bestSoFar: any, currentItem: any) => {
             if (typeof currentItem[key] !== 'number') throw new Error("Key property must be a number");
