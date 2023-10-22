@@ -22,6 +22,40 @@ describe("#filter", () => {
 });
 
 
+describe("#reduce", () => {
+    it("Throws if no initial value and empty sequence", async () => {
+        const empty = new Sequence([]);
+        expect(async () => await empty.reduce((acc, val) => acc + val)).rejects.toThrow();
+    });
+
+    it("Returns initial value for empty sequence", async () => {
+        const empty = new Sequence([]);
+        expect(await empty.reduce((acc, val) => acc + val, 0)).toBe(0);
+    });
+
+    it("Reduces sequence using given function", async () => {
+        const empty = new Sequence([1, 2, 3]);
+        expect(await empty.reduce((acc, val) => acc + val, 0)).toBe(6);
+    });
+
+    it("Uses first item in sequence when no initial value is given", async () => {
+        const empty = new Sequence([1, 2, 3]);
+        expect(await empty.reduce((acc: number, val) => acc + val)).toBe(6);
+    });
+
+    it("Uses initial value to start the accumulator", async () => {
+        const empty = new Sequence([1, 2, 3]);
+        expect(await empty.reduce((acc, val) => acc.concat(` *${val}*`), "list:"))
+            .toBe("list: *1* *2* *3*");
+    });
+
+    it("When output type is different than the ", async () => {
+        const empty = new Sequence([1, 2, 3]);
+        expect(await empty.reduce((acc, val) => acc.concat(` *${val}*`), ""))
+            .toBe(" *1* *2* *3*");
+    });
+});
+
 describe("#sum", () => {
     it("Sums array", async () => {
         const nums = new Sequence([1, 2, 3]);
@@ -46,9 +80,7 @@ describe("#max", () => {
 
     it("Throws on empty sequence", async () => {
         const nums = new Sequence([]);
-        expect(async () => await Sequence.max(nums))
-            .rejects
-            .toThrow("Can't find max of empty sequence");
+        expect(async () => await Sequence.max(nums)).rejects.toThrow(/empty sequence/);
     });
 });
 
@@ -65,8 +97,7 @@ describe("#maxObject", () => {
     it("Throws on empty sequence", async () => {
         const items = new Sequence([]);
         expect(async () => await Sequence.maxObject(items, "None"))
-            .rejects
-            .toThrow("Can't find max of empty sequence");
+            .rejects.toThrow(/empty sequence/);
     });
 
     it("Throws if 'key' property doesn't exist", async () => {
@@ -75,8 +106,7 @@ describe("#maxObject", () => {
         ]);
 
         expect(async () => await Sequence.maxObject(items, "age"))
-            .rejects
-            .toThrow("Key property missing from item");
+            .rejects.toThrow(/Key property/);
     });
 
     it("Throws if 'key' property isn't a number", async () => {
@@ -86,8 +116,18 @@ describe("#maxObject", () => {
         ]);
 
         expect(async () => await Sequence.maxObject(items, "size"))
-            .rejects
-            .toThrow("Key property must be a number");
+            .rejects.toThrow(/Key property/);
+    });
+});
+
+describe("#minObject", () => {
+    it("Finds min object, as defined by a 'key' property", async () => {
+        const items = new Sequence([
+            { name: "Apple", size: 2 }, { name: "Banana", size: 5 }, { name: "Cherry", size: 1 }
+        ]);
+
+        const smallest = await Sequence.minObject(items, "size");
+        expect(smallest).toStrictEqual({ name: "Cherry", size: 1 });
     });
 });
 

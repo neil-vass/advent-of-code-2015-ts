@@ -12,6 +12,8 @@
 // https://github.com/tc39/proposal-iterator-helpers
 // https://github.com/tc39/proposal-async-iterator-helpers
 // Until it's available, I've written this helper module.
+import {f} from "vitest/dist/types-63abf2e0.js";
+
 export class Sequence<T> {
     constructor(protected readonly seq: Iterable<T> | AsyncIterable<T>) {}
 
@@ -50,47 +52,49 @@ export class Sequence<T> {
         return new Sequence(apply_map(this.seq));
     }
 
+    async reduce<TReduce>(reducingFunction: (acc: TReduce, val: T) => TReduce, initialValue?: TReduce): Promise<TReduce> {
+        let accumulator: TReduce | undefined = undefined;
+        if (initialValue !== undefined) {
+            accumulator = initialValue;
+        }
+
+        for await (const item of this) {
+            if (accumulator === undefined) {
+                // @ts-ignore: this should be allowed if TReduce === T. I can't see a way to specify that.
+                // However, the caller will get various prompts from TypeScript about issues.
+                accumulator = item;
+            } else {
+                accumulator = reducingFunction(accumulator, item);
+            }
+        }
+
+        if (accumulator === undefined) throw new Error("Can't reduce empty sequence with no initial value");
+        return accumulator as TReduce;
+    }
+
     // On an infinite sequence, this will never return.
     static async sum(sequence: Sequence<number>) {
-        let total = 0;
-        for await (const n of sequence) {
-            total += n;
-        }
-        return total;
+        return sequence.reduce((acc, val) => acc + val, 0);
     }
 
     // On an infinite sequence, this will never return.
     static async max(sequence: Sequence<number>) {
-        let largestSeen = -Infinity;
-        let foundEntry = false;
-
-        for await (const n of sequence) {
-            foundEntry = true;
-            if (n > largestSeen) largestSeen = n;
-        }
-
-        if (!foundEntry) throw new Error("Can't find max of empty sequence");
-        return largestSeen;
+        // Having no initialValue means this will throw on an empty sequence.
+        return sequence.reduce((acc: number, val: number) => (acc > val) ? acc : val)
     }
 
-    // On an infinite sequence, this will never return.
     static async maxObject(sequence: Sequence<any>, key: string) {
-        let largestSeen: any;
+        return sequence.reduce((bestSoFar: any, currentItem: any) => {
+            if (typeof currentItem[key] !== 'number') throw new Error("Key property must be a number");
+            return (currentItem[key] > bestSoFar[key]) ? currentItem : bestSoFar;
+        });
+    }
 
-        for await (const item of sequence) {
-            const keyForItem = item[key]
-            if (keyForItem === undefined) throw new Error("Key property missing from item");
-            if (typeof keyForItem !== 'number') throw new Error("Key property must be a number");
-
-            if (largestSeen === undefined) {
-                largestSeen = item;
-            } else {
-                if (keyForItem > largestSeen[key]) largestSeen = item;
-            }
-        }
-
-        if (largestSeen === undefined) throw new Error("Can't find max of empty sequence");
-        return largestSeen;
+    static async minObject(sequence: Sequence<any>, key: string) {
+        return sequence.reduce((bestSoFar: any, currentItem: any) => {
+            if (typeof currentItem[key] !== 'number') throw new Error("Key property must be a number");
+            return (currentItem[key] < bestSoFar[key]) ? currentItem : bestSoFar;
+        });
     }
 
     // On an infinite sequence, this will never return.
