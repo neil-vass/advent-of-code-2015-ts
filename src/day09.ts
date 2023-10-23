@@ -1,4 +1,4 @@
-import {linesFromFile} from "./helpers.js";
+import {linesFromFile, permutations} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 
 export class DistanceTable {
@@ -22,31 +22,6 @@ export class DistanceTable {
             return this.distances.get(`${to}-${from}`)!;
         throw new Error(`Don't know distance between ${from} and ${to}`);
     }
-}
-
-// Reuse: if more files need this, move to helpers.ts
-export function permutations<T>(arr: T[]) {
-
-    // Heap's algorithm: a "decrease and conquer" method.
-    // Operates on 'k' elements of the array at each step
-    // (k starts at array's length and decreases by one each step).
-    function* generatePermutations<T>(arr: T[], k: number = arr.length): Iterable<T[]> {
-        if (k === 1) {
-            yield [...arr];
-        } else {
-            for (let i = 0; i < k; i++) {
-                yield* generatePermutations(arr, k - 1);
-                if (k % 2 === 0) {
-                    [arr[i], arr[k-1]] = [arr[k-1], arr[i]];
-                }
-                else {
-                    [arr[0], arr[k-1]] = [arr[k-1], arr[0]];
-                }
-            }
-        }
-    }
-
-    return new Sequence(generatePermutations(arr));
 }
 
 

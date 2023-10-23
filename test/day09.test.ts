@@ -1,7 +1,8 @@
-import {expect, describe, it, beforeEach, test} from "vitest";
+import {beforeEach, describe, expect, it, test} from "vitest";
 import * as day09 from "../src/day09";
-import {Sequence} from "../src/sequence";
 import {DistanceTable} from "../src/day09";
+import {Sequence} from "../src/sequence";
+import {permutations} from "../src/helpers";
 
 describe("DistanceTable class", () => {
     it("Remembers entries", () => {
@@ -19,12 +20,12 @@ describe("DistanceTable class", () => {
 describe("#permutations", () => {
 
     it("Returns 1 permutation for 1-element array", async () => {
-        const allPermutations = await day09.permutations(["A"]).toArray();
+        const allPermutations = await permutations(["A"]).toArray();
         expect(allPermutations).toStrictEqual([["A"]]);
     });
 
     it("Returns 2 permutation for 2-element array", async () => {
-        const allPermutations = await day09.permutations(["a", "b"]).toArray();
+        const allPermutations = await permutations(["a", "b"]).toArray();
         expect(allPermutations.length).toBe(2);
         expect(allPermutations).toStrictEqual(expect.arrayContaining([
             ["a", "b"],
@@ -33,7 +34,7 @@ describe("#permutations", () => {
     })
 
     it("Returns 6 permutation for 3-element array", async () => {
-        const allPermutations = await day09.permutations([1,2,3]).toArray();
+        const allPermutations = await permutations([1,2,3]).toArray();
         expect(allPermutations.length).toBe(6);
         expect(allPermutations).toStrictEqual(expect.arrayContaining([
             [1,2,3],
