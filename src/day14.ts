@@ -20,13 +20,26 @@ export class Reindeer {
     }
 }
 
+export function reindeerFromDescription(line: string) : Reindeer {
+    const m = line.match(/^\w+ can fly (\d+) km\/s for (\d+) seconds, but then must rest for (\d+) seconds.$/);
+    if (!m) throw new Error(`Unexpected line format: "${line}"`);
+    const [, speed, moveDuration, restDuration] = m;
+    return new Reindeer(+speed, +moveDuration, +restDuration);
+}
+
+export async function findWinningDistance(raceDuration: number, reindeerDescriptions: Sequence<string>) {
+    const distances = reindeerDescriptions.map(rd => reindeerFromDescription(rd)).map(r => r.distanceAfter(raceDuration));
+    return Sequence.max(distances);
+}
+
 export function fn(filepath: string) {
     return "Hello, World!";
 }
 
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
-    const filepath = "./src/data/day14.txt";
-    console.log(fn(filepath));
+    const raceDuration = 2503;
+    const reindeerDescriptions = linesFromFile("./src/data/day14.txt");
+    console.log(await findWinningDistance(raceDuration, reindeerDescriptions));
 }
 
