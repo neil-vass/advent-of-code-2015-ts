@@ -14,7 +14,7 @@ import {Sequence} from "./sequence.js";
 // in earlier versions.
 // See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
 function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
-    const cacheCollection = new Map<object, Map<string, any>>();
+    const cacheCollection = new WeakMap<object, Map<string, any>>();
 
     if (context.kind === "method") {
         return function (...args: any[]) {
