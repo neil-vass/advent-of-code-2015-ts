@@ -1,6 +1,7 @@
 import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 
+
 export interface CookieProperties {
     capacity: number;
     durability: number;
@@ -48,12 +49,55 @@ export class Cookie {
         }
     }
 
-    static mix(teaspoons: number, ingredient: IngredientProperties) {
-        const builder = new Cookie.builder();
-        builder.with(teaspoons, ingredient);
-        return builder;
+    static mix(teaspoons?: number, ingredient?: IngredientProperties) {
+        const mixer = new Cookie.builder();
+        if (arguments.length == 2) {
+            mixer.with(arguments[0], arguments[1]);
+        }
+        return mixer;
     }
 
+
+
+    static async bestCookieScoreFrom(totalTeaspoons: number, ingredients: IngredientProperties[]) {
+        let best = 0;
+
+        for await (const tsp of waysToAllocate(totalTeaspoons, ingredients.length)) {
+            const mix = Cookie.mix();
+
+            let calories = 0;
+            ingredients.forEach((val, idx) => {
+                mix.with(tsp[idx], val);
+                calories += tsp[idx] * val.calories;
+            });
+
+            if (calories === 500) {
+                const cookie = mix.bake();
+                // @ts-ignore: TS doesn't trust that this object will have these keys. It should!
+                const score = Object.keys(cookie.properties).reduce((acc, key) => acc * cookie.properties[key], 1);
+                best = Math.max(best, score);
+            }
+        }
+
+        return best;
+    }
+}
+
+function waysToAllocate(balls: number, buckets: number) {
+
+    function *choose(balls: number, buckets: number) : Iterable<number[]> {
+        if (buckets === 1) {
+            yield [balls]
+        } else {
+            for (let i=0; i<=balls; i++) {
+                for (const response of choose(balls-i, buckets-1)) {
+                    yield [i].concat(response)
+                }
+            }
+        }
+    }
+
+    return new Sequence(choose(balls, buckets));
 }
 
 export function ingredientFromDescription(description: string): IngredientProperties {
@@ -64,6 +108,10 @@ export function ingredientFromDescription(description: string): IngredientProper
     return {name: m[1], capacity: +m[2], durability: +m[3], flavor: +m[4], texture: +m[5], calories: +m[6]};
 }
 
+export async function bestCookieScore(lines: Sequence<string>) {
+    const ingredients = await lines.map(ln => ingredientFromDescription(ln)).toArray();
+    return Cookie.bestCookieScoreFrom(100, ingredients);
+}
 
 
 // If this script was invoked directly on the command line:
