@@ -83,7 +83,7 @@ export class Cookie {
     }
 }
 
-function waysToAllocate(balls: number, buckets: number) {
+export function waysToAllocate(balls: number, buckets: number) {
 
     function *choose(balls: number, buckets: number) : Iterable<number[]> {
         if (buckets === 1) {
@@ -116,6 +116,6 @@ export async function bestCookieScore(lines: Sequence<string>) {
 
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
-    const filepath = "./src/data/day15.txt";
-
+    const lines = linesFromFile("./src/data/day15.txt");
+    console.log(await bestCookieScore(lines));
 }
