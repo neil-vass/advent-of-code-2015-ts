@@ -96,20 +96,20 @@ export class Grid {
     step() {
         const neighbourCounts = new NeighbourCounts();
 
-        for (const light of this.litLights) {
-            neighbourCounts.setIfMissing(light, 0);
+        for (const litLight of this.litLights) {
+            neighbourCounts.setIfMissing(litLight, 0);
 
-            for (const pos of this.neighboursOf(light)) {
-                neighbourCounts.addToCount(pos, 1);
+            for (const neighbour of this.neighboursOf(litLight)) {
+                neighbourCounts.addToCount(neighbour, 1);
             }
         }
 
-        for (const [pos, neighbours] of neighbourCounts) {
-            if (neighbours !== 2) {
-                this.litLights.delete(pos);
+        for (const [light, neighbourCount] of neighbourCounts) {
+            if (neighbourCount !== 2) {
+                this.litLights.delete(light);
             }
-            if (neighbours === 3) {
-                this.litLights.add(pos);
+            if (neighbourCount === 3) {
+                this.litLights.add(light);
             }
         }
 

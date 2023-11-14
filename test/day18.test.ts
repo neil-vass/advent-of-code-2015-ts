@@ -11,7 +11,7 @@ describe("Basic operations", () => {
         ]);
 
         // @ts-ignore strange...
-        const neighbours = [...grid.neighboursOf(0,0)];
+        const neighbours = [...grid.neighboursOf([0,0])];
         expect(neighbours.length).toBe(3);
         expect(neighbours).toContainEqual([0,1]);
         expect(neighbours).toContainEqual([1,0]);
