@@ -23,7 +23,7 @@ export function numWaysToStore(amount: number, containers: number[]) {
 
 export function numWaysToStoreInMinimumContainers(amount: number, containers: number[]) {
     const ways = waysToStore(amount, containers);
-    const minContainers = ways.reduce((acc, way) => (way.length < acc) ? way.length : acc, Infinity);
+    const minContainers = ways.reduce((acc, val) => (val.length < acc) ? val.length : acc, Infinity);
     const waysThatUseMinContainers = ways.filter(w => w.length === minContainers);
     return waysThatUseMinContainers.length;
 }
