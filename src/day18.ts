@@ -70,30 +70,36 @@ export class Grid {
         this.setOn([this.cols - 1, this.rows - 1]);
     }
 
-    *neighboursOf(row: number, col: number) : Iterable<[number, number]> {
-        if (row > 0) {
-            if (col > 0) yield [row - 1, col - 1];
+    *neighboursOf(pos: Pos) : Iterable<Pos> {
+        const [row, col] = pos;
+        const thereAreLightsAbove = row > 0;
+        const thereAreLightsBelow = row < this.rows -1;
+        const thereAreLightsLeft = col > 0;
+        const thereAreLightsRight = col < this.cols -1;
+
+        if (thereAreLightsAbove) {
+            if (thereAreLightsLeft) yield [row - 1, col - 1];
             yield [row - 1, col];
-            if (col < this.cols - 1) yield [row - 1, col + 1];
+            if (thereAreLightsRight) yield [row - 1, col + 1];
         }
 
-        if (col > 0) yield [row, col - 1];
-        if (col < this.cols - 1) yield [row, col + 1];
+        if (thereAreLightsLeft) yield [row, col - 1];
+        if (thereAreLightsRight) yield [row, col + 1];
 
-        if (row < this.rows - 1) {
-            if (col > 0) yield [row + 1, col - 1];
+        if (thereAreLightsBelow) {
+            if (thereAreLightsLeft) yield [row + 1, col - 1];
             yield [row + 1, col];
-            if (col < this.cols - 1) yield [row + 1, col + 1];
+            if (thereAreLightsRight) yield [row + 1, col + 1];
         }
     }
 
     step() {
         const neighbourCounts = new NeighbourCounts();
 
-        for (const [row, col] of this.litLights) {
-            neighbourCounts.setIfMissing([row, col], 0);
+        for (const light of this.litLights) {
+            neighbourCounts.setIfMissing(light, 0);
 
-            for (const pos of this.neighboursOf(row, col)) {
+            for (const pos of this.neighboursOf(light)) {
                 neighbourCounts.addToCount(pos, 1);
             }
         }
