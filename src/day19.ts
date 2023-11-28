@@ -2,7 +2,7 @@ import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 import {f} from "vitest/dist/types-63abf2e0.js";
 
-// Correct name
+// Correct email
 export async function parse(input: Sequence<string>) : Promise<[Array<[string, string]>, string]> {
     let lastLine = false;
     const replacements = new Array<[string, string]>();
