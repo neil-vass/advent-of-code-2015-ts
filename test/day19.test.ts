@@ -4,8 +4,6 @@ import {Sequence} from "../src/sequence";
 
 
 describe("Part 1", () => {
-
-
     it("Parses input", async () => {
         const input = new Sequence([
             "H => HO",
@@ -25,10 +23,37 @@ describe("Part 1", () => {
             ["H", "HO"],
             ["H", "OH"],
             ["O", "HH"],
-        ]
+        ];
         const startingMolecule = "HOH";
 
         const molecules = day19.distinctMolecules(replacements, startingMolecule);
         expect(molecules.size).toBe(4);
+    });
+});
+
+describe("Part 2", () => {
+
+    it("Solves a very basic question", () => {
+        const replacements: [string, string][] =[
+            ["e", "H"],
+            ["e", "O"],
+            ["H", "HO"],
+        ];
+        const medicineMolecule = "HO";
+
+        expect(day19.fewestStepsToMake(replacements, medicineMolecule)).toBe(2);
+    });
+
+    it("Solves the example puzzle", () => {
+        const replacements: [string, string][] =[
+            ["e", "H"],
+            ["e", "O"],
+            ["H", "HO"],
+            ["H", "OH"],
+            ["O", "HH"],
+        ];
+
+        expect(day19.fewestStepsToMake(replacements, "HOH")).toBe(3);
+        expect(day19.fewestStepsToMake(replacements, "HOHOHO")).toBe(6);
     });
 });
