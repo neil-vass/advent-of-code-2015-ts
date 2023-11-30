@@ -1,8 +1,6 @@
-import {linesFromFile} from "./helpers.js";
+import {linesFromFile, MinPriorityQueue, SlowMinPriorityQueue} from "./helpers.js";
 import {Sequence} from "./sequence.js";
-import {f} from "vitest/dist/types-63abf2e0.js";
 
-// Correct email
 export async function parse(input: Sequence<string>) : Promise<[Array<[string, string]>, string]> {
     let lastLine = false;
     const replacements = new Array<[string, string]>();
@@ -65,14 +63,37 @@ export function fewestStepsToMake(replacements: [string, string][], medicineMole
     return Math.min(...distances);
 }
 
+function tryIt() {
+    const queue = new MinPriorityQueue();
+
+    for (let i=0; i < 100000; i++) {
+        queue.push("A", i);
+        queue.push("B", 1000000-i);
+    }
+
+    for (let i=0; i < 10000; i++) {
+        queue.pullMinElement();
+    }
+
+    for (let i=0; i < 100000; i++) {
+        queue.push("C", i+20000013);
+        queue.push("D", 3000078-i);
+        //queue.pullMinElement();
+    }
+
+    console.log(`last one: ${queue.pullMinElement()}`);
+}
+
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
-    const input = linesFromFile("./src/data/day19.txt");
-    const [replacements, startingMolecule] = await parse(input);
-    const molecules = distinctMolecules(replacements, startingMolecule);
-    console.log(`Part 1: ${molecules.size}`);
+    tryIt();
 
-    const medicineMolecule = startingMolecule;
-    const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
-    console.log(`Part 2: ${fewestSteps}`);
+    // const input = linesFromFile("./src/data/day19.txt");
+    // const [replacements, startingMolecule] = await parse(input);
+    // const molecules = distinctMolecules(replacements, startingMolecule);
+    // console.log(`Part 1: ${molecules.size}`);
+    //
+    // const medicineMolecule = startingMolecule;
+    // const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
+    // console.log(`Part 2: ${fewestSteps}`);
 }
