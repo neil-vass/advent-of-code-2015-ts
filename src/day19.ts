@@ -1,5 +1,8 @@
-import {linesFromFile, MinPriorityQueue, SlowMinPriorityQueue} from "./helpers.js";
+import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
+import {A_starSearch} from "./graphSearch.js";
+import * as repl from "repl";
+
 
 export async function parse(input: Sequence<string>) : Promise<[Array<[string, string]>, string]> {
     let lastLine = false;
@@ -54,7 +57,7 @@ function depthFirstSearch(replacements: [string, string][], startingPoint: strin
     return Infinity;
 }
 
-export function fewestStepsToMake(replacements: [string, string][], medicineMolecule: string) {
+export function fewestStepsToMakeDFS(replacements: [string, string][], medicineMolecule: string) {
     // the set returned by "distinctMolecule" is our possible next step.
     // So, we can explore using DFS or BFS and see what is the best path.
     // If: mol from next step is longer than target, we know to give up.
@@ -63,37 +66,50 @@ export function fewestStepsToMake(replacements: [string, string][], medicineMole
     return Math.min(...distances);
 }
 
-function tryIt() {
-    const queue = new MinPriorityQueue();
+class MoleculeContructor {
 
-    for (let i=0; i < 100000; i++) {
-        queue.push("A", i);
-        queue.push("B", 1000000-i);
+    constructor(private readonly replacements: Array<[string, string]>) {}
+
+    neighbours(node: string): Iterable<{node: string, cost: number}> {
+        let choices: Array<string>;
+        if (node === "") {
+            const firstMoves = this.replacements.filter(([from,]) => from === "e");
+            choices = firstMoves.map(([, to]) => to);
+        } else {
+            const nextMoves = distinctMolecules(this.replacements, node);
+            choices = [...nextMoves];
+        }
+        return choices.map(node => ({ node, cost: 1}));
     }
 
-    for (let i=0; i < 10000; i++) {
-        queue.pullMinElement();
+    heuristic(from: string, to: string): number {
+        if (from.length > to.length) {
+            return Infinity;
+        } else if (from.length < to.length) {
+            return (to.length - from.length) / 9;
+        } else {
+            return 0;
+        }
     }
-
-    for (let i=0; i < 100000; i++) {
-        queue.push("C", i+20000013);
-        queue.push("D", 3000078-i);
-        //queue.pullMinElement();
-    }
-
-    console.log(`last one: ${queue.pullMinElement()}`);
 }
+
+export function fewestStepsToMake(replacements: [string, string][], medicineMolecule: string) {
+    const graph = new MoleculeContructor(replacements);
+    const start = "";
+    const goal = medicineMolecule;
+    const searchResults = A_starSearch(graph, start, goal);
+    return searchResults.get(goal)?.costSoFar;
+}
+
 
 // If this script was invoked directly on the command line:
 if (`file://${process.argv[1]}` === import.meta.url) {
-    tryIt();
+    const input = linesFromFile("./src/data/day19.txt");
+    const [replacements, startingMolecule] = await parse(input);
+    const molecules = distinctMolecules(replacements, startingMolecule);
+    console.log(`Part 1: ${molecules.size}`);
 
-    // const input = linesFromFile("./src/data/day19.txt");
-    // const [replacements, startingMolecule] = await parse(input);
-    // const molecules = distinctMolecules(replacements, startingMolecule);
-    // console.log(`Part 1: ${molecules.size}`);
-    //
-    // const medicineMolecule = startingMolecule;
-    // const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
-    // console.log(`Part 2: ${fewestSteps}`);
+    const medicineMolecule = startingMolecule;
+    const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
+    console.log(`Part 2: ${fewestSteps}`);
 }
