@@ -71,33 +71,24 @@ class MoleculeContructor {
     constructor(private readonly replacements: Array<[string, string]>) {}
 
     neighbours(node: string): Iterable<{node: string, cost: number}> {
-        let choices: Array<string>;
-        if (node === "") {
-            const firstMoves = this.replacements.filter(([from,]) => from === "e");
-            choices = firstMoves.map(([, to]) => to);
-        } else {
-            const nextMoves = distinctMolecules(this.replacements, node);
-            choices = [...nextMoves];
-        }
+
+        const nextMoves = distinctMolecules(this.replacements, node);
+        const choices = [...nextMoves].map(c => c === "e" ? "" : c);
         return choices.map(node => ({ node, cost: 1}));
     }
 
     heuristic(from: string, to: string): number {
-        if (from.length > to.length) {
-            return Infinity;
-        } else if (from.length < to.length) {
-            return (to.length - from.length) / 9;
-        } else {
-            return 0;
-        }
+        return 0;
     }
 }
 
 export function fewestStepsToMake(replacements: [string, string][], medicineMolecule: string) {
-    const graph = new MoleculeContructor(replacements);
-    const start = "";
-    const goal = medicineMolecule;
+    const reversed = replacements.map(([k,v]) => [v,k]) as [string, string][];
+    const graph = new MoleculeContructor(reversed);
+    const start = medicineMolecule;
+    const goal = "";
     const searchResults = A_starSearch(graph, start, goal);
+    console.log(searchResults)
     return searchResults.get(goal)?.costSoFar;
 }
 
