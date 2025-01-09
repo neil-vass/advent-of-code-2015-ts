@@ -13,8 +13,6 @@ import {linesFromFile} from "./helpers.js";
 // in earlier versions.
 // See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
 function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
-    if (context.kind !== "method") throw new Error("Decorator for use on methods");
-
     const cacheCollection = new WeakMap<object, Map<string, any>>();
 
     return function(this: object, ...args: any[]) {
