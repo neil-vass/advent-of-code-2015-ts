@@ -1,5 +1,4 @@
 import {linesFromFile} from "./helpers.js";
-import {Sequence} from "./sequence.js";
 
 // The circuits can be large and complicated, and when evaluating the outputs the code
 // can end up looping round recalculating the same signals again and again. There's lots
@@ -14,27 +13,23 @@ import {Sequence} from "./sequence.js";
 // in earlier versions.
 // See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
 function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
+    if (context.kind !== "method") throw new Error("Decorator for use on methods");
+
     const cacheCollection = new WeakMap<object, Map<string, any>>();
 
-    if (context.kind === "method") {
-        return function (...args: any[]) {
-            // @ts-ignore : caller could be any type of object; I'm not sure how
-            // to tell TS that's fine.
-            const callingObject = this;
-            if (!cacheCollection.has(callingObject)) {
-                cacheCollection.set(callingObject, new Map<string, any>());
-            }
-            const cache = cacheCollection.get(callingObject)!;
-            const hashKey = args.join("-$-") // very much not a production-quality hash key.
-
-            if (cache.has(hashKey)) {
-                return cache.get(hashKey);
-            } else {
-                const result = decoratedMethod.apply(callingObject, args);
-                cache.set(hashKey, result);
-                return result;
-            }
+    return function(this: object, ...args: any[]) {
+        let cache = cacheCollection.get(this);
+        if (cache === undefined) {
+            cache = new Map<string, any>();
+            cacheCollection.set(this, cache);
         }
+
+        let result = cache.get(JSON.stringify(args));
+        if (result === undefined) {
+            result = decoratedMethod.apply(this, args);
+            cache.set(JSON.stringify(args), result);
+        }
+        return result;
     }
 }
 
@@ -84,8 +79,7 @@ export class Circuit {
         if (str.match(/^\d+$/)) {
             return +str;
         } else {
-            const result = this.calculateSignal(str);
-            return result;
+            return this.calculateSignal(str);
         }
     }
 
