@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import * as day04 from "../src/day04";
+import * as day04 from "../src/day04.js";
 
 // Takes a few seconds - remove `.skip` to run this.
 describe.skip("Finding MD5 hashes", () => {

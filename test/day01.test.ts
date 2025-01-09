@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day01 from "../src/day01";
+import * as day01 from "../src/day01.js";
 
 describe("#findFloor", () => {
     it("Gets back to 0 with even matches", () => {

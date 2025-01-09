@@ -1,7 +1,7 @@
 import {expect, describe, it} from "vitest";
-import * as day14 from "../src/day14";
-import {findWinningDistance, Reindeer} from "../src/day14";
-import {Sequence} from "../src/sequence";
+import * as day14 from "../src/day14.js";
+import {findWinningDistance, Reindeer} from "../src/day14.js";
+import {Sequence} from "../src/sequence.js";
 
 const testFilename = "./test/data/day14.txt"
 

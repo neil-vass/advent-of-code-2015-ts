@@ -1,6 +1,6 @@
 import {expect, describe, it} from "vitest";
-import * as day19 from "../src/day19";
-import {Sequence} from "../src/sequence";
+import * as day19 from "../src/day19.js";
+import {Sequence} from "../src/sequence.js";
 
 
 describe("Part 1", () => {

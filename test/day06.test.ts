@@ -1,6 +1,6 @@
 import {expect, describe, it} from "vitest";
-import * as day06 from "../src/day06";
-import {Sequence} from "../src/sequence";
+import * as day06 from "../src/day06.js";
+import {Sequence} from "../src/sequence.js";
 
 describe("GridOfLights class", () => {
     it("Starts off all dark", () => {

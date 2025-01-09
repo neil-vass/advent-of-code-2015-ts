@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import {waysToStore, numWaysToStore, numWaysToStoreInMinimumContainers} from "../src/day17";
+import {waysToStore, numWaysToStore, numWaysToStoreInMinimumContainers} from "../src/day17.js";
 
 
 describe("#numWaysToStore", () => {

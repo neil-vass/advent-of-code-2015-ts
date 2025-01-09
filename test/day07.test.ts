@@ -1,6 +1,6 @@
 import {expect, describe, it} from "vitest";
-import * as day07 from "../src/day07";
-import {Circuit} from "../src/day07";
+import * as day07 from "../src/day07.js";
+import {Circuit} from "../src/day07.js";
 
 const sampleInput = [
     "123 -> x",

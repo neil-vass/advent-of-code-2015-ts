@@ -1,8 +1,8 @@
 import {beforeEach, describe, expect, it, test} from "vitest";
-import * as day09 from "../src/day09";
-import {DistanceTable} from "../src/day09";
-import {Sequence} from "../src/sequence";
-import {permutations} from "../src/helpers";
+import * as day09 from "../src/day09.js";
+import {DistanceTable} from "../src/day09.js";
+import {Sequence} from "../src/sequence.js";
+import {permutations} from "../src/helpers.js";
 
 describe("DistanceTable class", () => {
     it("Remembers entries", () => {

@@ -1,5 +1,5 @@
 import {expect, describe, it, beforeEach} from "vitest";
-import * as day18 from "../src/day18";
+import * as day18 from "../src/day18.js";
 
 
 describe("Basic operations", () => {

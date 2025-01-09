@@ -1,6 +1,6 @@
 import {expect, describe, it} from "vitest";
-import * as day05 from "../src/day05";
-import {Sequence} from "../src/sequence";
+import * as day05 from "../src/day05.js";
+import {Sequence} from "../src/sequence.js";
 
 const testFilename = "./test/data/day05.txt"
 

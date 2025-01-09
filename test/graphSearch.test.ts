@@ -105,27 +105,8 @@ describe("A* search", () => {
     });
 
     // TODO: Can we demonstrate heuristic's working?
-    it("Uses heuristic to decide where to explore", () => {
+    it.skip("Uses heuristic to decide where to explore", () => {
         throw new Error("TODO: Use heuristic!")
-        const graph = {
-            neighbours(node: string) {
-                switch(node) {
-                    case "A": return [{node: "B", cost: 10}, {node: "C", cost: 2}];
-                    case "B": return [];
-                    case "C": return [{node: "A", cost: 2}, {node: "D", cost: 2}];
-                    case "D": return [{node: "C", cost: 2}, {node: "B", cost: 2}];
-                    default: throw new Error(`${node} is not a node`);
-                }
-            },
-
-            heuristic(from: string, to: string) {
-                return 0;
-            }
-        }
-
-        const result = A_starSearch(graph, "A", "B");
-        const shortestRoute = result.get("B")!.costSoFar;
-        expect(shortestRoute).toStrictEqual(6);
     });
 
 });

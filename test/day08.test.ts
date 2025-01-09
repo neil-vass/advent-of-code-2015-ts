@@ -1,6 +1,6 @@
 import {expect, describe, it, test} from "vitest";
-import * as day08 from "../src/day08";
-import {linesFromFile} from "../src/helpers";
+import * as day08 from "../src/day08.js";
+import {linesFromFile} from "../src/helpers.js";
 
 // In this challenge: we're looking at strings read from file, with no
 // interpretation of special chars - so we can't easily use string literals

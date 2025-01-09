@@ -1,5 +1,5 @@
 import {describe, expect, it, vi} from "vitest";
-import {Sue, sueFromDescription} from "../src/day16";
+import {Sue, sueFromDescription} from "../src/day16.js";
 
 describe("#fitsTheFacts", () => {
     it("True if the known facts about Sue fits all the facts", () => {

@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day12 from "../src/day12";
+import * as day12 from "../src/day12.js";
 
 describe("#sumAllNumbers", () => {
     it("Works for given part 1 examples", () => {

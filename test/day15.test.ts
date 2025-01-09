@@ -1,6 +1,6 @@
 import {expect, describe, it, beforeEach} from "vitest";
-import {bestCookieScore, Cookie, ingredientFromDescription, waysToAllocate} from "../src/day15";
-import {Sequence} from "../src/sequence";
+import {bestCookieScore, Cookie, ingredientFromDescription, waysToAllocate} from "../src/day15.js";
+import {Sequence} from "../src/sequence.js";
 
 describe("#ingredientFromDescription", () => {
     it("Turns string into object", () => {

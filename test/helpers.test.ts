@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import {singleLineFromFile, linesFromFile} from "../src/helpers";
+import {singleLineFromFile, linesFromFile} from "../src/helpers.js";
 
 describe("#singleLineFromFile", () => {
     it("Fetches the single line from a one-line file, dropping newline at the end.", () => {

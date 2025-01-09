@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day02 from "../src/day02"
+import * as day02 from "../src/day02.js"
 
 describe("#parsePresent", () => {
     it("Splits a string into a present", async () => {

@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day03 from "../src/day03";
+import * as day03 from "../src/day03.js";
 
 describe("#housesDeliveredTo (single Santa)", () => {
     it("Delivers to 2 houses from a single instruction", () => {

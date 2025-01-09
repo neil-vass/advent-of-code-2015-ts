@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day11 from "../src/day11";
+import * as day11 from "../src/day11.js";
 
 describe("Password rules", () => {
     it("Must have a straight of 3 letters", () => {

@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import * as day10 from "../src/day10";
+import * as day10 from "../src/day10.js";
 
 
 describe("#lookAndSay", () => {
