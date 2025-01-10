@@ -12,22 +12,23 @@ import {linesFromFile} from "./helpers.js";
 // This is using the official decorators from TypeScript 5, not the experimental ones available
 // in earlier versions.
 // See https://devblogs.microsoft.com/typescript/announcing-typescript-5-0/#decorators
-function memoize(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
-    const cacheCollection = new WeakMap<object, Map<string, any>>();
+function cache(decoratedMethod: Function, context: ClassMethodDecoratorContext) {
+    const resultsByObject = new WeakMap<object, Map<string, any>>();
 
-    return function(this: object, ...args: any[]) {
-        let cache = cacheCollection.get(this);
-        if (cache === undefined) {
-            cache = new Map<string, any>();
-            cacheCollection.set(this, cache);
+    return function(this: object) {
+        let results = resultsByObject.get(this);
+        if (results === undefined) {
+            results = new Map<string, any>();
+            resultsByObject.set(this, results);
         }
 
-        let result = cache.get(JSON.stringify(args));
-        if (result === undefined) {
-            result = decoratedMethod.apply(this, args);
-            cache.set(JSON.stringify(args), result);
+        const hashKey = JSON.stringify(arguments);
+        let output = results.get(hashKey);
+        if (output === undefined) {
+            output = decoratedMethod.apply(this, arguments);
+            results.set(hashKey, output);
         }
-        return result;
+        return output;
     }
 }
 
@@ -72,7 +73,7 @@ export class Circuit {
             this.connect(i);
     }
 
-    @memoize
+    @cache
     private getValue(str: string) {
         if (str.match(/^\d+$/)) {
             return +str;
