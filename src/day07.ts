@@ -46,21 +46,21 @@ export class Circuit {
     connect(command: string) {
         const setSignalMatch = command.match(/^(\w+) -> (\w+)$/);
         if (setSignalMatch) {
-            const [signal, target] = setSignalMatch.slice(1);
+            const [, signal, target] = setSignalMatch;
             this.components.set(target, [signal]);
             return;
         }
 
         const unaryOpMatch = command.match(/^(NOT) (\w+) -> (\w+)$/);
         if (unaryOpMatch) {
-            const [op, arg, target] = unaryOpMatch.slice(1);
+            const [, op, arg, target] = unaryOpMatch;
             this.components.set(target, [op, arg]);
             return;
         }
 
         const binaryOpMatch = command.match(/^(\w+) (AND|OR|LSHIFT|RSHIFT) (\w+) -> (\w+)$/);
         if (binaryOpMatch) {
-            const [left, op, right, target] = binaryOpMatch.slice(1);
+            const [, left, op, right, target] = binaryOpMatch;
             this.components.set(target, [op, left, right]);
             return;
         }
