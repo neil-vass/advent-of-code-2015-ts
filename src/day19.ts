@@ -66,7 +66,7 @@ export function fewestStepsToMakeDFS(replacements: [string, string][], medicineM
     return Math.min(...distances);
 }
 
-class MoleculeContructor {
+class MoleculeConstructor {
 
     constructor(private readonly replacements: Array<[string, string]>) {}
 
@@ -84,11 +84,11 @@ class MoleculeContructor {
 
 export function fewestStepsToMake(replacements: [string, string][], medicineMolecule: string) {
     const reversed = replacements.map(([k,v]) => [v,k]) as [string, string][];
-    const graph = new MoleculeContructor(reversed);
+    const graph = new MoleculeConstructor(reversed);
     const start = medicineMolecule;
     const goal = "";
     const searchResults = A_starSearch(graph, start, goal);
-    console.log(searchResults)
+    console.log(searchResults.size)
     return searchResults.get(goal)?.costSoFar;
 }
 
