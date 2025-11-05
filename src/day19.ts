@@ -1,7 +1,7 @@
 import {linesFromFile} from "./helpers.js";
 import {Sequence} from "./sequence.js";
 import {A_starSearch} from "./graphSearch.js";
-import * as repl from "repl";
+import { pathToFileURL } from 'url'
 
 
 export async function parse(input: Sequence<string>) : Promise<[Array<[string, string]>, string]> {
@@ -68,12 +68,12 @@ export function fewestStepsToMakeDFS(replacements: [string, string][], medicineM
 
 class MoleculeConstructor {
 
-    constructor(private readonly replacements: Array<[string, string]>) {}
+    constructor(private readonly replacements: Array<[string, string]>, private readonly target: string) {}
 
     neighbours(node: string): Iterable<{node: string, cost: number}> {
-
+        if (node.length >= this.target.length) return [];
         const nextMoves = distinctMolecules(this.replacements, node);
-        const choices = [...nextMoves].map(c => c === "e" ? "" : c);
+        const choices = [...nextMoves]
         return choices.map(node => ({ node, cost: 1}));
     }
 
@@ -82,25 +82,39 @@ class MoleculeConstructor {
     }
 }
 
+// Searches through the space of all possible replacements; won't work on the real input,
+// the space is far too big.
 export function fewestStepsToMake(replacements: [string, string][], medicineMolecule: string) {
-    const reversed = replacements.map(([k,v]) => [v,k]) as [string, string][];
-    const graph = new MoleculeConstructor(reversed);
-    const start = medicineMolecule;
-    const goal = "";
+    const graph = new MoleculeConstructor(replacements, medicineMolecule);
+    const start = "e";
+    const goal = medicineMolecule;
     const searchResults = A_starSearch(graph, start, goal);
     console.log(searchResults.size)
     return searchResults.get(goal)?.costSoFar;
 }
 
+// I did my very best to work things out on my own, but had to go looking for ideas.
+// https://www.reddit.com/r/adventofcode/comments/3xflz8/comment/cy4etju describes how
+// some symbols in the molecule mean "( , )" and the rules around these.
+// Don't think I would ever have discovered that!
+export function calculateStepsCleverly(medicineMolecule: string) {
+    const elements = medicineMolecule.match(/[A-Z]/g)!.length;
+    const openParens = medicineMolecule.match(/Rn/g)!.length;
+    const commas = medicineMolecule.match(/Y/g)!.length;
+    const closeParens = medicineMolecule.match(/Ar/g)!.length;
+    return elements - openParens - 2*commas - closeParens -1;
+}
+
 
 // If this script was invoked directly on the command line:
-if (`file://${process.argv[1]}` === import.meta.url) {
+if(pathToFileURL(process.argv[1]).href === import.meta.url) {
     const input = linesFromFile("./src/data/day19.txt");
     const [replacements, startingMolecule] = await parse(input);
     const molecules = distinctMolecules(replacements, startingMolecule);
     console.log(`Part 1: ${molecules.size}`);
 
     const medicineMolecule = startingMolecule;
-    const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
+    // const fewestSteps = fewestStepsToMake(replacements, medicineMolecule);
+    const fewestSteps = calculateStepsCleverly(medicineMolecule)
     console.log(`Part 2: ${fewestSteps}`);
 }

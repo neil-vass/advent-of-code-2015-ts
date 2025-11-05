@@ -1,3 +1,4 @@
+import { pathToFileURL } from 'url'
 import {singleLineFromFile} from "./helpers.js";
 
 export function findFloor(instructions: string) {
@@ -23,7 +24,7 @@ export function firstEntryToBasement(instructions: string) {
 
 
 // If this script was invoked directly on the command line:
-if(`file://${process.argv[1]}` === import.meta.url) {
+if(pathToFileURL(process.argv[1]).href === import.meta.url) {
     const instructions = singleLineFromFile("src/data/day01.txt");
     console.log(findFloor(instructions));
     console.log(firstEntryToBasement(instructions));
